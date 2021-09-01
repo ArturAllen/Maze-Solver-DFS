@@ -6,6 +6,8 @@
 #define RIGHT 1
 #define LEFT 3
 
+#define MAZE_SIZE 10
+
 typedef struct{
     int l,r;
 } position;
@@ -15,9 +17,9 @@ typedef struct{
     int dir;
 } move;
 
-void printCurrentState(char maze[10][10], position p, int dir){
-    for(int i=0; i<10; i++){
-        for(int k=0; k<10; k++){
+void printCurrentState(char maze[MAZE_SIZE][MAZE_SIZE], position p, int dir){
+    for(int i=0; i<MAZE_SIZE; i++){
+        for(int k=0; k<MAZE_SIZE; k++){
             if(i==p.l && k==p.r){
                 switch(dir){
                 case UP:
@@ -42,7 +44,7 @@ void printCurrentState(char maze[10][10], position p, int dir){
 
 int max_depth=0, solved=0;
 
-move moves[100];
+move moves[4*MAZE_SIZE*MAZE_SIZE];
 
 position forward(position p, int dir){
     position pr;
@@ -129,11 +131,11 @@ int search(position pos, int dir, int depth){
     return 0;
 }
 
-int isSolved(char maze[10][10], position p){
+int isSolved(char maze[MAZE_SIZE][MAZE_SIZE], position p){
     return maze[p.l][p.r]=='*';
 }
 
-void solveMaze(char maze[10][10], position p, int dir, int depth){
+void solveMaze(char maze[MAZE_SIZE][MAZE_SIZE], position p, int dir, int depth){
     if(search(p, dir, depth)){
         //printf("Hooray\n");
         return;
@@ -180,7 +182,7 @@ void solveMaze(char maze[10][10], position p, int dir, int depth){
 
 int main()
 {
-    char maze[10][10]=
+    char maze[MAZE_SIZE][MAZE_SIZE]=
     {
         {'#','#','#','#','#','#','#','#','#','#'},
         {'#',' ',' ','#',' ',' ',' ','#',' ','#'},
