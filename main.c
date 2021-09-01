@@ -15,6 +15,31 @@ typedef struct{
     int dir;
 } move;
 
+void printCurrentState(char maze[10][10], position p, int dir){
+    for(int i=0; i<10; i++){
+        for(int k=0; k<10; k++){
+            if(i==p.l && k==p.r){
+                switch(dir){
+                case UP:
+                    printf("^ ");
+                    break;
+                case DOWN:
+                    printf("v ");
+                    break;
+                case LEFT:
+                    printf("< ");
+                    break;
+                case RIGHT:
+                    printf("> ");
+                    break;
+                }
+            }
+            else printf("%c ", maze[i][k]);
+        }
+        printf("\n");
+    }
+}
+
 int max_depth=0, solved=0;
 
 move moves[100];
@@ -95,24 +120,36 @@ int rotateLeft(int dir){
     return directions[(dir+3)%4];
 }
 
+int search(position pos, int dir, int depth){
+    if(depth==0) return 0;
+    for(int i=0; i<depth-1; i++){
+        move mv=moves[i];
+        if(mv.p.l==pos.l && mv.p.r==pos.r && mv.dir==dir) return 1;
+    }
+    return 0;
+}
+
 int isSolved(char maze[10][10], position p){
     return maze[p.l][p.r]=='*';
 }
 
 void solveMaze(char maze[10][10], position p, int dir, int depth){
+    if(search(p, dir, depth)){
+        //printf("Hooray\n");
+        return;
+    }
     if(isSolved(maze, p)){
         solved=1;
-        /*printf("Depth: %d\n", depth);
-        printf("max_depth: %d\n", max_depth);
-        printCurrentState(maze, p, dir);*/
         max_depth=depth;
         return;
     }
+    //printf("%d\n", depth);
+    //printCurrentState(maze, p, dir);
     position futPos;
     move mv;
     if(!solved){
         futPos=forward(p, dir);
-        if(maze[futPos.l][futPos.r]==' ' || maze[futPos.l][futPos.r]=='*'){
+        if(maze[futPos.l][futPos.r]!='#'){
             mv.p=futPos;
             mv.dir=dir;
             moves[depth]=mv;
@@ -121,7 +158,7 @@ void solveMaze(char maze[10][10], position p, int dir, int depth){
     }
     if(!solved){
         futPos=right(p, dir);
-        if(maze[futPos.l][futPos.r]==' ' || maze[futPos.l][futPos.r]=='*'){
+        if(maze[futPos.l][futPos.r]!='#'){
             mv.p=futPos;
             mv.dir=rotateRight(dir);
             moves[depth]=mv;
@@ -131,7 +168,7 @@ void solveMaze(char maze[10][10], position p, int dir, int depth){
 
     if(!solved){
         futPos=left(p, dir);
-        if(maze[futPos.l][futPos.r]==' ' || maze[futPos.l][futPos.r]=='*'){
+        if(maze[futPos.l][futPos.r]!='#'){
             mv.p=futPos;
             mv.dir=rotateLeft(dir);
             moves[depth]=mv;
@@ -139,31 +176,6 @@ void solveMaze(char maze[10][10], position p, int dir, int depth){
         }
     }
 
-}
-
-void printCurrentState(char maze[10][10], position p, int dir){
-    for(int i=0; i<10; i++){
-        for(int k=0; k<10; k++){
-            if(i==p.l && k==p.r){
-                switch(dir){
-                case UP:
-                    printf("^ ");
-                    break;
-                case DOWN:
-                    printf("v ");
-                    break;
-                case LEFT:
-                    printf("< ");
-                    break;
-                case RIGHT:
-                    printf("> ");
-                    break;
-                }
-            }
-            else printf("%c ", maze[i][k]);
-        }
-        printf("\n");
-    }
 }
 
 int main()
@@ -175,9 +187,9 @@ int main()
         {'#',' ','#',' ',' ','#',' ',' ',' ','#'},
         {'#',' ','#',' ','#','#','#','#','#','#'},
         {'#',' ','#',' ',' ',' ',' ',' ',' ','#'},
-        {'#',' ','#','#','#','#','#','#',' ','#'},
+        {'#',' ','#','#',' ','#','#','#',' ','#'},
         {'#',' ','#','*',' ',' ',' ','#',' ','#'},
-        {'#',' ','#','#','#',' ','#','#',' ','#'},
+        {'#',' ','#','#',' ','#','#','#',' ','#'},
         {'#',' ',' ',' ',' ',' ',' ',' ',' ','#'},
         {'#','#','#','#','#','#','#','#','#','#'}
     };
